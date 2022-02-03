@@ -1,0 +1,19 @@
+uxnseqnew uxn
+uxnseqload [grab uxn] rng.rom
+
+# init
+uxnseqeval [grab uxn] [uxnsym rng.rom init]
+
+regset [hold [metro 10]] 0
+
+uxnseqnode [grab uxn] [uxnsym rng.rom top] [regget 0]
+add zz 48
+tsmoother zz [tick] [rline 0.001 0.008 1]
+mtof zz
+blsaw zz
+butlp zz [rline [param 400] [param 1800] [rline 1 4 1]]
+mul zz 0.4
+unhold [regget 0]
+wavout zz rng.wav
+
+computes 15

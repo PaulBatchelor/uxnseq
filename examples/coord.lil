@@ -1,0 +1,80 @@
+uxnseqnew uxn
+uxnseqload [grab uxn] coord.rom
+
+regset [hold [metro 8]] 0
+
+uxnseqeval [grab uxn] [uxnsym coord.rom init]
+
+hold [zero]
+regset zz 2
+
+uxnseqnode [grab uxn] [uxnsym coord.rom melA] [regget 0]
+regset [uxnseqlast [grab uxn]] 1
+dup
+add zz 36
+tsmoother zz [tick] 0.005
+mtof zz
+gensine [tabnew 8192]
+swap
+fmpair zz zz \
+    [param 1] \
+    [param 1] \
+    [rline 1 4 0.5] \
+    [param 0.3]
+swap
+add zz 24
+mtof zz
+blsaw zz
+butlp zz 300
+add zz zz
+
+softclip zz 4.8
+mul zz 0.1
+uxnseqtk [regget 1]
+env zz 0.003 0.1 0.08
+mul zz zz
+dup
+buthp zz 300
+mix zz [regget 2] 0.5
+
+gensine [tabnew 8192]
+uxnseqnode [grab uxn] [uxnsym coord.rom melB] [regget 0]
+regset [uxnseqlast [grab uxn]] 1
+add zz 48
+tsmoother zz [tick] 0.01
+mtof zz
+param 1
+param 1
+uxnseqtk [regget 1]
+env zz 0.001 0.001 0.02
+scale zz 0 5
+param 0.1
+fmpair zz zz zz zz zz zz
+mul zz 0.3
+buthp zz 200
+
+
+uxnseqtk [regget 1]
+
+env zz 0.001 0.05 0.2
+mul zz zz
+
+dup
+mix zz [regget 2] 0.5
+
+add zz zz
+
+regget 2
+vardelay zz 0.0 0.1 0.2
+dup
+bigverb zz zz 0.97 10000
+drop
+dcblocker zz
+mul zz [dblin -12]
+add zz zz
+
+unhold [regget 0]
+unhold [regget 2]
+wavout zz coord.wav
+
+computes 30

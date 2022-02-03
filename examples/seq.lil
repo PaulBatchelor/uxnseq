@@ -1,0 +1,15 @@
+uxnseqnew uxn
+uxnseqload [grab uxn] seq.rom
+
+regset [hold [metro 10]] 0
+
+uxnseqnode [grab uxn] [uxnsym seq.rom top] [regget 0]
+tsmoother zz [tick] [trand [regget 0] 0.001 0.01]
+mtof zz
+blsaw zz
+butlp zz [smoother [trand [regget 0] 500 2000] 0.001]
+mul zz 0.4
+unhold [regget 0]
+wavout zz "seq.wav"
+
+computes 15

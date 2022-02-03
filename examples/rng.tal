@@ -1,0 +1,51 @@
+(
+Random sequencing test in uxnseq.
+)
+
+%PITCH { #20 DEO }
+%DUR { #21 DEO }
+%NOTE { DUR PITCH BRK }
+%SEQ-GET { ;pos LDA ADD LDA }
+%UPDATE-POS { ;pos LDA INC ;pos STA ;pos LDA }
+%BACK-TO-TOP { #00 ;pos STA ;top JMP2 }
+%SEQ-PLAY { ;&seq SEQ-GET #01 NOTE UPDATE-POS }
+%MOD2 { DIV2k MUL2 SUB2 }
+
+|0100
+@init
+#12 #34 #56 #78 ;prng-init JSR2
+BRK
+
+@sequences :a :b :c :d
+
+@pos 00
+
+@top
+;sequences
+;prng JSR2 #00 #04 MOD2 SWP POP
+#02 MUL ADD LDA2 JMP2
+
+@a SEQ-PLAY #04 LTH ;a JCN2 BACK-TO-TOP
+&seq 00 02 03 07
+
+@b SEQ-PLAY #04 LTH ;b JCN2 BACK-TO-TOP
+&seq 00 08 07 03
+
+@c SEQ-PLAY #03 LTH ;c JCN2 BACK-TO-TOP
+&seq 00 0a 02
+
+@d SEQ-PLAY #08 LTH ;d JCN2 BACK-TO-TOP
+&seq 00 03 02 07 0a 09 05 02
+
+( https://wiki.xxiivv.com/site/uxntal_macros.html )
+
+@prng-init ( -- ) ,prng/y STR2 ,prng/x STR2 JMP2r
+
+@prng ( -- number* )
+	LIT2 &x $2
+	DUP2 #50 SFT2 EOR2
+	DUP2 #03 SFT2 EOR2
+	LIT2 &y $2 DUP2 ,&x STR2
+	DUP2 #01 SFT2 EOR2 EOR2
+	,&y STR2k POP
+JMP2r

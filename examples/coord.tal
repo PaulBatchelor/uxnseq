@@ -1,0 +1,90 @@
+%PITCH { #20 DEO }
+%DUR { #21 DEO }
+%NOTE { DUR PITCH }
+%CHECK-RESET {
+    LDA ;&pos LDA SWP
+    LTH ;&skip JCN2 #00 ;&pos STA
+}
+%SEQ-NOTE {
+;&pos LDA ;SEQ-GET JSR2 BRK
+}
+
+|0100
+
+@init
+#1234 #5678 ;prng-init JSR2
+;seqA1 #00 STZ2
+;seqB1 #02 STZ2
+BRK
+
+%MOD2 { DIV2k MUL2 SUB2 }
+@melA
+#00 LDZ2 SEQ-NOTE
+;&pos LDA INC ;&pos STA
+#00 LDZ2 CHECK-RESET
+
+;seqA ;prng JSR2 #0003 MOD2
+#0002 MUL2 ADD2 LDA2
+#00 STZ2
+
+&skip ;melA JMP2
+&pos 00
+
+
+
+@melB
+#02 LDZ2 SEQ-NOTE
+;&pos LDA INC ;&pos STA
+#02 LDZ2 CHECK-RESET
+
+#00 LDZ2 ;seqA2 NEQ2 ;&choose-B1 JCN2
+;seqB2 #02 STZ2 ,&skip JMP
+&choose-B1
+;seqB1 #02 STZ2
+&skip ;melB JMP2
+&pos 00
+
+@SEQ-GET
+#02 MUL ADD #01 ADD LDA2 NOTE
+JMP2r
+
+@seqA :seqA1 :seqA2 :seqA3
+
+@seqA1 04
+00 02
+02 02
+07 02
+0c 01
+
+@seqA2 04
+01 02
+06 02
+08 02
+0b 01
+
+@seqA3 05
+00 01
+05 01
+07 01
+00 02
+0c 02
+
+@seqB1 01
+18 18
+
+@seqB2 02
+1d 06
+1f 16
+
+( https://wiki.xxiivv.com/site/uxntal_macros.html )
+
+@prng-init ( -- ) ,prng/y STR2 ,prng/x STR2 JMP2r
+
+@prng ( -- number* )
+	LIT2 &x $2
+	DUP2 #50 SFT2 EOR2
+	DUP2 #03 SFT2 EOR2
+	LIT2 &y $2 DUP2 ,&x STR2
+	DUP2 #01 SFT2 EOR2 EOR2
+	,&y STR2k POP
+JMP2r

@@ -1,0 +1,16 @@
+%PITCH { #30 ADD #20 DEO }
+%DUR { #21 DEO }
+%NOTE { DUR PITCH BRK }
+
+|0100
+
+@pos 00
+@seq 00 02 03 0a 0c 07 03 02
+
+@top
+;seq ;pos LDA DUP INC ;pos STA ADD LDA
+;pos LDA #08 LTH ,&skip JCN
+#00 ;pos STA
+&skip
+#01 NOTE
+,top JMP
